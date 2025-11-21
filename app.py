@@ -8,10 +8,21 @@ import json
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, LLM
 
-load_dotenv()
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+import os
+
+# Try reading from Streamlit secrets (only works on cloud)
+try:
+    import streamlit as st
+    GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
+except Exception:
+    # Local development fallback
+    from dotenv import load_dotenv
+    load_dotenv()
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
 if not GEMINI_API_KEY:
-    raise RuntimeError("GEMINI_API_KEY not found in .env. Add GEMINI_API_KEY=YOUR_KEY")
+    raise RuntimeError("GEMINI_API_KEY missing! Add it in Streamlit Secrets or .env")
+
 
 GEMINI_MODEL = "gemini-2.0-flash"
 
@@ -177,3 +188,4 @@ if __name__ == "__main__":
                 print("Requirements:", req)
             except Exception as e2:
                 print("Fallback error:", e2)
+
